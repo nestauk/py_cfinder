@@ -59,6 +59,12 @@ Installation
 
     pip install py-cfinder
 
+This package also requires the CFinder tool, which can be downloaded from
+http://www.cfinder.org/
+
+Once CFinder has been installed, py_cfinder requires an environment variable,
+CFINDER, to point to its location.
+
 Documentation
 =============
 
