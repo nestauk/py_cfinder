@@ -8,7 +8,7 @@ from subprocess import run
 
 
 class CFinder():
-    def __init__(self, cfinder_path, licence_path=None):
+    def __init__(self, licence_path=None):
         """CFinder
         A wrapper class for the CFinder utility.
 
@@ -18,9 +18,9 @@ class CFinder():
                 None, then will try to use licence.txt, located in the same
                 parent directory as the CFinder utility. Defaults to None.
         """
-        self.cfinder_path = cfinder_path
-        self.licence_path = self._locate_licence(licence_path)
 
+        self.cfinder_path = self._locate_cfinder()
+        self.licence_path = self._locate_licence(licence_path)
 
     def _locate_licence(self, licence_path):
         """_locate_licence
@@ -39,6 +39,18 @@ class CFinder():
                     )
         else:
             return licence_path
+
+    def _locate_cfinder(self):
+        try:
+            cfinder_path = os.environ['CFINDER']
+            return cfinder_path
+        except KeyError:
+            raise KeyError(
+                    ("There is no environment variable named CFINDER on this "
+                     "system. To use this tool, set CFINDER as the directory "
+                     "containing the CFinder tool. If you do not have CFinder, "
+                     "you can download it from http://www.cfinder.org/")
+                    )
 
     def find(self, i, o=None, W=None, w=None, d=None, t=None, D=False,
         U=True, I=False, k=None, delete_output=False):
@@ -75,7 +87,8 @@ class CFinder():
             command.extend(['-o', o])
 
         self.output_dir = o
-        shutil.rmtree(self.output_dir)
+        if os.path.isdir(self.output_dir):
+            shutil.rmtree(self.output_dir)
 
         if W is not None:
             command.extend(['-W', W])
