@@ -41,6 +41,10 @@ class CFinder():
             return licence_path
 
     def _locate_cfinder(self):
+        """_locate_cfinder
+        Checks if CFinder's location has been set as an environment variable
+        and returns its path.
+        """
         try:
             cfinder_path = os.environ['CFINDER']
             return cfinder_path
