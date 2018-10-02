@@ -123,20 +123,6 @@ class CFinder():
 
         Returns:
             results (dict): Dictionary containing dataframes for all outputs.
-                The structure of the reults is:
-                {'cliques': cliques_df,
-                 'graph': graph_df,
-                 'k=...': {
-                    'communities': communities_df,
-                    'communities_cliques': communities_cliques_df,
-                    'communities_links': communities_links_df,
-                    'communities_graph': graph_of_communities_df,
-                    'degree_distribution': degree_distribution_df,
-                    'membership_distribution': membership_distribution_df,
-                    'overlap_distribution': overlap_distribution_df,
-                    'size_distribution': size_distribution_df,
-                    },
-                }
         """
         if output_dir is None:
             output_dir = self.output_dir
@@ -249,24 +235,23 @@ class CFinder():
         """
         data_dict = {'source': [], 'target': [], 'weight': []}
         data = self._read_data(file_path)
-        if len(data) > 0:
-            if len(data[0].split(' ')) > 2:
-                weight = True
+        if len(data[0].split(' ')) > 2:
+            weight = True
+        else:
+            weight = False
+
+        for row in data:
+            if weight:
+                s, t, w = row.split(' ')
+                data_dict['weight'].append(w)
             else:
-                weight = False
+                s, t = row.split(' ')
+                data_dict['weight'].append(1)
+            data_dict['source'].append(s)
+            data_dict['target'].append(t)
 
-            for row in data:
-                if weight:
-                    s, t, w = row.split(' ')
-                    data_dict['weight'].append(w)
-                else:
-                    s, t = row.split(' ')
-                    data_dict['weight'].append(1)
-                data_dict['source'].append(s)
-                data_dict['target'].append(t)
-
-            df = pandas.DataFrame(data_dict)
-            return df
+        df = pandas.DataFrame(data_dict)
+        return df
 
     def _load_distribution_file(self, file_path):
         """_load_distribution_file
