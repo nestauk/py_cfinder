@@ -81,18 +81,20 @@ class CFinder():
         
 
         command = [self.cfinder_path, '-l', self.licence_path, '-i', i]
-
         if o is None:
-            out_dir = os.path.abspath(
-                    os.path.join(self.cfinder_path, os.pardir)
+            self.output_dir = os.path.join(
+                    os.path.abspath(
+                        os.path.join(self.cfinder_path, os.pardir)
+                    ),
+                    'output'
                     )
-            command.extend(['-o',  os.path.join(o, 'output')])
+            command.extend(['-o',  self.output_dir])
         else:
+            self.output_dir = o
             command.extend(['-o', o])
 
-        self.output_dir = o
-        if os.path.isdir(self.output_dir):
-            shutil.rmtree(self.output_dir)
+#         if os.path.isdir(self.output_dir):
+#             shutil.rmtree(self.output_dir)
 
         if W is not None:
             command.extend(['-W', W])
@@ -123,7 +125,9 @@ class CFinder():
 
         run(command)
 
-        cliques = self._load_community_file(os.path.join(self.output_dir, 'cliques'))
+        cliques = self._load_community_file(
+                os.path.join(self.output_dir, 'cliques')
+                )
         
         if delete_output:
             shutil.rmtree(self.output_dir)
@@ -236,7 +240,7 @@ class CFinder():
         data = self._read_data(file_path)
         for row in data:
             i, d = row.split(': ')
-            d = tuple(d.split(' '))
+            d = tuple(d.split(' ')[:-1])
             data_dict[comm_id].append(int(i))
             data_dict[comm_nodes].append(d)
 
