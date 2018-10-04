@@ -243,9 +243,10 @@ class CFinder():
             d = tuple(d.split(' ')[:-1])
             data_dict[comm_id].append(int(i))
             data_dict[comm_nodes].append(d)
+ 
+        data_dict[comm_nodes] = [tuple(self._digits_to_nums(i)) for i in data_dict[comm_nodes]]
 
-        df = pandas.DataFrame(data_dict)
-        return df
+        return data_dict
             
     def _load_graph_file(self, file_path):
         """_load_graph_file
@@ -282,12 +283,16 @@ class CFinder():
                     data_dict['weight'].append(w)
                 else:
                     s, t = row.split(' ')
-                    data_dict['weight'].append(1)
+                    data_dict['weight'].append('1')
                 data_dict['source'].append(s)
                 data_dict['target'].append(t)
 
-            df = pandas.DataFrame(data_dict)
-            return df
+            data_dict['source'] = self._digits_to_nums(data_dict['source'])
+            data_dict['target'] = self._digits_to_nums(data_dict['target'])
+            data_dict['weight'] = self._digits_to_nums(data_dict['weight'])
+            return data_dict
+#             df = pandas.DataFrame(data_dict)
+#             return df
 
     def _load_distribution_file(self, file_path):
         """_load_distribution_file
@@ -319,11 +324,11 @@ class CFinder():
         # distribution files have two blank lines at end
         for row in data[:-1]:
             m, c = row.split(' ')
-            data_dict[metric].append(m)
-            data_dict['count'].append(c)
-
-        df = pandas.DataFrame(data_dict)
-        return df
+            data_dict[metric].append(int(m))
+            data_dict['count'].append(int(c))
+        return data_dict
+#         df = pandas.DataFrame(data_dict)
+#         return df
 
     def _load_communities_cliques_file(self, file_path):
         """_load_communities_cliques_file
@@ -341,13 +346,28 @@ class CFinder():
             if ':' in row:
                 community = int(row.split(':')[0])
             else:
-                community_edges[community].append(tuple(row.split(' ')))
+                e = tuple(self._digits_to_nums(row.split(' '))) 
+                community_edges[community].append(e)
 
         for k, v in community_edges.items():
             data_dict['community'].append(k)
             data_dict['edges'].append(v)
-
-        return pandas.DataFrame(data_dict)
+        return data_dict
+#         return pandas.DataFrame(data_dict)
+    
+    def _digits_to_nums(self, l):
+        """digits_to_ints
+        Replaces string numbers with int or float representations
+        """
+        n = []
+        for i in l:
+            if i.isdigit():
+                n.append(int(i))
+            elif i.isdecimal():
+                n.append(float(i))
+            else:
+                n.append(i)
+        return n
 
     def _read_data(self, file_path):
         """_read_data
