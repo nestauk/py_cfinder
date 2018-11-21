@@ -123,8 +123,10 @@ class CFinder():
 
         if D == False:
             command.append('-U')
+            clique_dir = self.dirs['cliques'].format('')
         elif D == True:
             command.append('-D')
+            clique_dir = self.dirs['cliques'].format('directed_')
 
         if I == True:
             if w is None:
@@ -135,7 +137,7 @@ class CFinder():
         run(command)
 
         cliques = self._load_community_file(
-                os.path.join(self.output_dir, 'cliques')
+                os.path.join(self.output_dir, clique_dir)
                 )
         
         if delete_output:
