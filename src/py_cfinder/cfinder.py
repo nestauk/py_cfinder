@@ -9,7 +9,7 @@ from subprocess import run
 
 class CFinder():
 
-    dirs = {
+    self.dirs = {
             'cliques': '{}cliques',
             'graph': '{}graph',
             'comms': '{}communities',
