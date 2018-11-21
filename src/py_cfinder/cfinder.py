@@ -9,19 +9,6 @@ from subprocess import run
 
 class CFinder():
 
-    self.dirs = {
-            'cliques': '{}cliques',
-            'graph': '{}graph',
-            'comms': '{}communities',
-            'comms_cliques': '{}communities_cliques',
-            'comms_graph': 'graph_of_{}communities_graph',
-            'comms_links': '{}communities_links',
-            'degree_dist': '{}degree_distribuion',
-            'size_dist': '{}size_distribution',
-            'membership_dist': '{}membership_distribution',
-            'overlap_dist': '{}overlap_distribution',
-            }
-
     def __init__(self, licence_path=None):
         """CFinder
         A wrapper class for the CFinder utility.
@@ -35,6 +22,18 @@ class CFinder():
 
         self.cfinder_path = self._locate_cfinder()
         self.licence_path = self._locate_licence(licence_path)
+        self.dirs = {
+                'cliques': '{}cliques',
+                'graph': '{}graph',
+                'comms': '{}communities',
+                'comms_cliques': '{}communities_cliques',
+                'comms_graph': 'graph_of_{}communities_graph',
+                'comms_links': '{}communities_links',
+                'degree_dist': '{}degree_distribuion',
+                'size_dist': '{}size_distribution',
+                'membership_dist': '{}membership_distribution',
+                'overlap_dist': '{}overlap_distribution',
+                }
 
     def _locate_licence(self, licence_path):
         """_locate_licence
