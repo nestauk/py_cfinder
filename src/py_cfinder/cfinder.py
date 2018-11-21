@@ -8,6 +8,20 @@ from subprocess import run
 
 
 class CFinder():
+
+    dirs = {
+            'cliques': '{}cliques',
+            'graph': '{}graph',
+            'comms': '{}communities',
+            'comms_cliques': '{}communities_cliques',
+            'comms_graph': 'graph_of_{}communities_graph',
+            'comms_links': '{}communities_links',
+            'degree_dist': '{}degree_distribuion',
+            'size_dist': '{}size_distribution',
+            'membership_dist': '{}membership_distribution',
+            'overlap_dist': '{}overlap_distribution',
+            }
+
     def __init__(self, licence_path=None):
         """CFinder
         A wrapper class for the CFinder utility.
@@ -57,7 +71,7 @@ class CFinder():
                     )
 
     def find(self, i, o=None, W=None, w=None, d=None, t=None, D=False,
-        U=True, I=False, k=None, delete_output=False):
+        I=False, k=None, delete_output=False):
         """find
         Run the CFinder tool on an edge list.
         Args
@@ -107,15 +121,10 @@ class CFinder():
         if k is not None:
             command.extend(['-k', k])
 
-        if (U == True) & (D == True):
-            raise ValueError(("CFinder cannot apply directed and undirected "
-                              "search algorithms at the same time.")
-                              )
-        else:
-            if U == True:
-                command.append('-U')
-            elif D == True:
-                command.append('-D')
+        if D == False:
+            command.append('-U')
+        elif D == True:
+            command.append('-D')
 
         if I == True:
             if w is None:
@@ -162,23 +171,10 @@ class CFinder():
         if output_dir is None:
             output_dir = self.output_dir
 
-        dirs = {
-                'cliques': '{}cliques',
-                'graph': '{}graph',
-                'comms': '{}communities',
-                'comms_cliques': '{}communities_cliques',
-                'comms_graph': 'graph_of_{}communities_graph',
-                'comms_links': '{}communities_links',
-                'degree_dist': '{}degree_distribuion',
-                'size_dist': '{}size_distribution',
-                'membership_dist': '{}membership_distribution',
-                'overlap_dist': '{}overlap_distribution',
-                }
-
         if directed:
-            dirs = {k: v.format('directed_') for k, v in dirs.items()}
+            dirs = {k: v.format('directed_') for k, v in self.dirs.items()}
         else:
-            dirs = {k: v.format('') for k, v in dirs.items()}
+            dirs = {k: v.format('') for k, v in self.dirs.items()}
 
         results = {}
 
@@ -239,12 +235,13 @@ class CFinder():
             file_path (str): Path to a CFinder output file.
 
         Returns:
-            df (pandas.DataFrame): A dataframe with columns for the community
-                of clique ID and the elements that it contains.
+            data_dict (dict): A dict with keys for the community
+                of clique ID and for the elements that it contains.
 
         """
         file_name = file_path.split(os.sep)[-1]
         columns = file_name.split('_')
+        columns = [c for c in columns if c != 'directed']
 
         if len(columns) == 1:
             if columns[0] == 'communities':
@@ -309,8 +306,6 @@ class CFinder():
             data_dict['target'] = self._digits_to_nums(data_dict['target'])
             data_dict['weight'] = self._digits_to_nums(data_dict['weight'])
             return data_dict
-#             df = pandas.DataFrame(data_dict)
-#             return df
 
     def _load_distribution_file(self, file_path):
         """_load_distribution_file
@@ -335,7 +330,11 @@ class CFinder():
                 and its count.
         """
         file_name = file_path.split(os.sep)[-1]
-        metric = file_name.split('_')[0]
+        file_name = file_name.split('_')
+        if file_name[0] == 'directed':
+            metric = file_name[1]
+        else:
+            metric = file_name[0]
         data_dict = {metric: [], 'count': []}
 
         data = self._read_data(file_path)
@@ -345,8 +344,6 @@ class CFinder():
             data_dict[metric].append(int(m))
             data_dict['count'].append(int(c))
         return data_dict
-#         df = pandas.DataFrame(data_dict)
-#         return df
 
     def _load_communities_cliques_file(self, file_path):
         """_load_communities_cliques_file
@@ -371,7 +368,6 @@ class CFinder():
             data_dict['community'].append(k)
             data_dict['edges'].append(v)
         return data_dict
-#         return pandas.DataFrame(data_dict)
     
     def _digits_to_nums(self, l):
         """digits_to_ints
