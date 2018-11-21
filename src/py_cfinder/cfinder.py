@@ -134,7 +134,7 @@ class CFinder():
 
         return cliques
 
-    def load(self, output_dir=None):
+    def load(self, output_dir=None, directed=False):
         """load
         Loads results from a CFinder output directory.
 
@@ -162,13 +162,31 @@ class CFinder():
         if output_dir is None:
             output_dir = self.output_dir
 
+        dirs = {
+                'cliques': '{}cliques',
+                'graph': '{}graph',
+                'comms': '{}communities',
+                'comms_cliques': '{}communities_cliques',
+                'comms_graph': 'graph_of_{}communities_graph',
+                'comms_links': '{}communities_links',
+                'degree_dist': '{}degree_distribuion',
+                'size_dist': '{}size_distribution',
+                'membership_dist': '{}membership_distribution',
+                'overlap_dist': '{}overlap_distribution',
+                }
+
+        if directed:
+            dirs = {k: v.format('directed_') for k, v in dirs.items()}
+        else:
+            dirs = {k: v.format('') for k, v in dirs.items()}
+
         results = {}
 
         results['cliques'] = self._load_community_file(
-                os.path.join(output_dir, 'cliques')
+                os.path.join(output_dir, dirs['cliques'])
                 )
         results['graph'] =self._load_graph_file(
-                os.path.join(output_dir, 'graph')
+                os.path.join(output_dir, dirs['graph'])
                 )
 
         k_dirs = self._get_k_directories(output_dir)
@@ -178,28 +196,28 @@ class CFinder():
             results[k] = {}
             k_output_dir = os.path.join(output_dir, k_dir)
             results[k]['communities'] = self._load_community_file(
-                    os.path.join(k_output_dir, 'communities')
+                    os.path.join(k_output_dir, dirs['comms'])
                     )
             results[k]['communities_cliques'] = self._load_community_file(
-                    os.path.join(k_output_dir, 'communities_cliques')
+                    os.path.join(k_output_dir, dirs['comms_cliques'])
                     )
             results[k]['communities_links'] = self._load_communities_cliques_file(
-                    os.path.join(k_output_dir, 'communities_links')
+                    os.path.join(k_output_dir, dirs['comms_links'])
                     )
             results[k]['communities_graph'] = self._load_graph_file(
-                    os.path.join(k_output_dir, 'graph_of_communities')
+                    os.path.join(k_output_dir, dirs['comms_graph'])
                     )
             results[k]['degree_distribution'] = self._load_distribution_file(
-                    os.path.join(k_output_dir, 'degree_distribution')
+                    os.path.join(k_output_dir, dirs['degree_dist'])
                     )
             results[k]['membership_distribution'] = self._load_distribution_file(
-                    os.path.join(k_output_dir, 'membership_distribution')
+                    os.path.join(k_output_dir, dirs['membership_dist'])
                     )
             results[k]['overlap_distribution'] = self._load_distribution_file(
-                    os.path.join(k_output_dir, 'overlap_distribution')
+                    os.path.join(k_output_dir, dirs['overlap_dist'])
                     )
             results[k]['size_distribution'] = self._load_distribution_file(
-                    os.path.join(k_output_dir, 'size_distribution')
+                    os.path.join(k_output_dir, dirs['size_dist'])
                     )
 
         return results
