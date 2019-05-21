@@ -76,8 +76,8 @@ class CFinder():
         Args
             i (str): Input file dir.
             o (str) Output dir.
-            w (float): Upper link weight threshold.
-            W (float): Lower link weight threshold.
+            w (float): Lower link weight threshold.
+            W (float): Upper link weight threshold.
             d (int): Number of digits when creating the name of the default 
                 output directory of the link weight thresholded input.
             t (int): Maximal time allowed for clique search per node.
