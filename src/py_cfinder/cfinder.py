@@ -110,15 +110,15 @@ class CFinder():
 #             shutil.rmtree(self.output_dir)
 
         if W is not None:
-            command.extend(['-W', W])
+            command.extend(['-W',str(W)])
         if w is not None:
-            command.extend(['-w', w])
+            command.extend(['-w', str(w)])
         if d is not None:
             command.extend(['-d', d])
         if t is not None:
-            command.extend(['-t', t])
+            command.extend(['-t', str(t)])
         if k is not None:
-            command.extend(['-k', k])
+            command.extend(['-k', str(k)])
 
         if D == False:
             command.append('-U')
